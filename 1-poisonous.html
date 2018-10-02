@@ -45,6 +45,7 @@
                 let head_dead_zone = 30;
                 let body_speed = 0.75;
                 let body_dead_zone = 10;
+                let jitter = Math.PI/8;
 
                 let elems = [];
                 
@@ -93,7 +94,7 @@
                 document.ontouchmove = function(event) {
                     mouse.style.left = event.pageX;
                     mouse.style.top = event.pageY;
-                    event.preventDefault();
+                    //event.preventDefault();
                 };
 
                 let update = function(elem, target, speed, dead) {
@@ -105,9 +106,10 @@
                     let diffX = targetX - x;
                     let diffY = targetY - y;
 
-                    if(Math.sqrt(diffX**2 + diffY**2) < dead)
+                    if(Math.sqrt(diffX**2 + diffY**2) >= dead)
                     {
-                        return;
+                        elem.style.top = y + (diffY * speed);
+                        elem.style.left = x + (diffX * speed);
                     }
                     
                     let angle = Math.atan2(diffY, diffX);
@@ -121,9 +123,9 @@
                     }
                     elem.angle = angle;
                     angle += elem.rot * (2 * Math.PI);
+
+                    angle += (Math.random() * jitter) - (jitter/2);
                     
-                    elem.style.top = y + (diffY * speed);
-                    elem.style.left = x + (diffX * speed);
                     elem.style.transform = "translateX(-50%) translateY(-50%) rotate(" + angle + "rad)";
                 };
 
