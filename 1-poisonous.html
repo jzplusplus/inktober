@@ -89,6 +89,11 @@
                     mouse.style.left = event.pageX;
                     mouse.style.top = event.pageY;
                 };
+                document.ontouchmove = function(event) {
+                    mouse.style.left = event.pageX;
+                    mouse.style.top = event.pageY;
+                    event.preventDefault();
+                };
 
                 let update = function(elem, target, speed, dead) {
                     let y = parseFloat(elem.style.top);
