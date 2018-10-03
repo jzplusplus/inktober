@@ -7,7 +7,7 @@
             function play(freqs) {
                 let fadein = 0.25;
                 let duration = 0.5;
-                let fadeout = 5;
+                let fadeout = 7;
                 
                 for(let i=0; i < freqs.length; i++)
                 {
@@ -67,8 +67,8 @@
             }
             
             document.onclick = function() { makeRipple(event.pageX, event.pageY) };
-            document.ontouchdown = function() { makeRipple(event.pageX, event.pageY) };
-            
+            document.ontouchstart = function() { makeRipple(event.pageX, event.pageY) };
+                        
             setInterval(function() {
                 if(!stop && (Math.random() > 0.5))
                 {
@@ -109,10 +109,20 @@
                     opacity: 0;
                 }
             }
+            
+            .credit {
+                position: fixed;
+                top: 97vh;
+                left: 1vh;
+                
+                font-size: 1.5vh;
+                color: white;
+            }
         </style>
     </head>
     
     <body>
+        <div class="credit">Thanks to Charles for helping with the audio!</div>
     </body>
     
 </html>
