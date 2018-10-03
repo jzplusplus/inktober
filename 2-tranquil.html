@@ -24,7 +24,7 @@
                         gain.connect(ac.destination);
                         osc.start(0);
 
-                        gain.gain.exponentialRampToValueAtTime(1.0, ac.currentTime + fadein);
+                        gain.gain.exponentialRampToValueAtTime(0.5, ac.currentTime + fadein);
                         setTimeout(function(){ gain.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + fadeout); }, (fadein+duration)*1000);
                         setTimeout(function() { osc.stop(); }, (fadein+duration+fadeout)*1000);
                     }
@@ -73,8 +73,14 @@
                     }, 5000);
                 }
 
-                document.onclick = function(event) { makeRipple(event.pageX, event.pageY) };
-                document.ontouchstart = function(event) { makeRipple(event.touches[0].pageX, event.touches[0].pageY) };
+                if(document.ontouchstart !== undefined)
+                {
+                    document.ontouchstart = function(event) { makeRipple(event.touches[0].pageX, event.touches[0].pageY) };
+                }
+                else
+                {
+                    document.onclick = function(event) { makeRipple(event.pageX, event.pageY) };
+                }
 
                 setInterval(function() {
                     if(count == 0 && (Math.random() > 0.5))
