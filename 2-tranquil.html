@@ -2,20 +2,21 @@
     <head>
         <script type="text/javascript">
             let ac = new AudioContext();
-            let count = 0;
+            let stop = false;
             
-            function play() {
+            function play(freqs) {
                 let fadein = 0.25;
                 let duration = 0.5;
                 let fadeout = 5;
                 
-                for(let i=0; i < arguments.length; i++)
+                for(let i=0; i < freqs.length; i++)
                 {
                     let osc = ac.createOscillator();
                     let gain = ac.createGain();
                     osc.connect(gain);
                     osc.type = "triangle";
-                    osc.frequency.value = arguments[i];
+                    osc.frequency.value = freqs[i];
+                    
                     gain.gain.setValueAtTime(0.00001, ac.currentTime);
                     gain.connect(ac.destination);
                     osc.start(0);
@@ -27,15 +28,19 @@
             }
             
             function chord() {
-                count++;
+                let base = [155.6,293.7,466.2,784.0,932.3];
+                let multiplier = 0.5 + (3 * Math.random());
                 
-                if(count % 4 == 0) { play(155.6,293.7,466.2,784.0,932.3); }
-                else if(count % 4 == 1) { play(155.6,293.7,466.2,784.0,932.3); }
-                else if(count % 4 == 2) { play(155.6,293.7,466.2,784.0,932.3); }
-                else if(count % 4 == 3) { play(155.6,293.7,466.2,784.0,932.3); }
+                let freq = [];
+                for(let i=0; i<base.length; i++)
+                {
+                    freq.push(base[i] * multiplier);
+                }
+                
+                play(freq);
             }
             
-            function makeRipple(x,y)
+            function makeCircle(x,y)
             {
                 let e = document.createElement("div");
                 e.classList.add("circle");
@@ -48,24 +53,42 @@
                 document.body.appendChild(e);
                 
                 setTimeout(function() { document.body.removeChild(e); }, 2000);
-                chord();
             }
             
-            document.onclick = function(event) {
-                makeRipple(event.pageX,event.pageY);
-                setTimeout(function() { makeRipple(event.pageX,event.pageY); }, 100+(Math.random()*100));
-                setTimeout(function() { makeRipple(event.pageX,event.pageY); }, 300+(Math.random()*100));
-            };
+            function makeRipple(x,y)
+            {
+                chord();
+                makeCircle(x,y);
+                setTimeout(function() { makeCircle(x,y); }, 100+(Math.random()*100));
+                setTimeout(function() { makeCircle(x,y); }, 300+(Math.random()*100));
+                
+                stop = true;
+                setTimeout(function() { stop = false; }, 6000);
+            }
+            
+            document.onclick = function() { makeRipple(event.pageX, event.pageY) };
+            document.ontouchdown = function() { makeRipple(event.pageX, event.pageY) };
+            
+            setInterval(function() {
+                if(!stop && (Math.random() > 0.5))
+                {
+                    let randx = Math.random() * document.body.scrollWidth;
+                    let randy = Math.random() * document.body.scrollHeight;
+                    makeRipple(randx,randy);
+                }
+            }, 1000);
         </script>
         
         <style type="text/css">
             body {
                 background: #0099ff;
+                background: repeating-linear-gradient(70deg, rgba(20,156,255,1) 100px, rgba(0,136,255,1) 200px, rgba(20,156,255,1) 300px);
             }
             
             .circle {
                 position: absolute;
                 background: none;
+                opacity: 0.75;
                 
                 border: 1px solid blue;
                 border-radius: 50% 50% 50% 50%;
@@ -78,7 +101,7 @@
                 from {
                     height: 2px;
                     width: 2px;
-                    opacity: 1;
+                    opacity: 0.75;
                 }
                 to {
                     height: 600px;
