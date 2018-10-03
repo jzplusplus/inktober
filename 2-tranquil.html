@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <script type="text/javascript">
+            let ac = new AudioContext();
+            let count = 0;
+            
+            function play() {
+                let fadein = 0.25;
+                let duration = 0.5;
+                let fadeout = 5;
+                
+                for(let i=0; i < arguments.length; i++)
+                {
+                    let osc = ac.createOscillator();
+                    let gain = ac.createGain();
+                    osc.connect(gain);
+                    osc.type = "triangle";
+                    osc.frequency.value = arguments[i];
+                    gain.gain.setValueAtTime(0.00001, ac.currentTime);
+                    gain.connect(ac.destination);
+                    osc.start(0);
+                    
+                    gain.gain.exponentialRampToValueAtTime(1.0, ac.currentTime + fadein);
+                    setTimeout(function(){ gain.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + fadeout); }, (fadein+duration)*1000);
+                    setTimeout(function() { osc.stop(); }, (fadein+duration+fadeout)*1000);
+                }
+            }
+            
+            function chord() {
+                count++;
+                
+                if(count % 4 == 0) { play(155.6,293.7,466.2,784.0,932.3); }
+                else if(count % 4 == 1) { play(155.6,293.7,466.2,784.0,932.3); }
+                else if(count % 4 == 2) { play(155.6,293.7,466.2,784.0,932.3); }
+                else if(count % 4 == 3) { play(155.6,293.7,466.2,784.0,932.3); }
+            }
+            
+            function makeRipple(x,y)
+            {
+                let e = document.createElement("div");
+                e.classList.add("circle");
+                e.style.top = y;
+                e.style.left = x;
+                
+                let size = 1 + (5 * Math.random());
+                e.style.borderWidth = size + "px";
+                
+                document.body.appendChild(e);
+                
+                setTimeout(function() { document.body.removeChild(e); }, 2000);
+                chord();
+            }
+            
+            document.onclick = function(event) {
+                makeRipple(event.pageX,event.pageY);
+                setTimeout(function() { makeRipple(event.pageX,event.pageY); }, 100+(Math.random()*100));
+                setTimeout(function() { makeRipple(event.pageX,event.pageY); }, 300+(Math.random()*100));
+            };
+        </script>
+        
+        <style type="text/css">
+            body {
+                background: #0099ff;
+            }
+            
+            .circle {
+                position: absolute;
+                background: none;
+                
+                border: 1px solid blue;
+                border-radius: 50% 50% 50% 50%;
+                transform: translateX(-50%) translateY(-50%);
+                
+                animation: 2s ease-out expand;
+            }
+            
+            @keyframes expand {
+                from {
+                    height: 2px;
+                    width: 2px;
+                    opacity: 1;
+                }
+                to {
+                    height: 600px;
+                    width: 600px;
+                    opacity: 0;
+                }
+            }
+        </style>
+    </head>
+    
+    <body>
+    </body>
+    
+</html>
