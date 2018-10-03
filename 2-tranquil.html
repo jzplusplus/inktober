@@ -1,82 +1,90 @@
 <html>
     <head>
         <script type="text/javascript">
-            let ac = new AudioContext();
-            let stop = false;
-            
-            function play(freqs) {
-                let fadein = 0.25;
-                let duration = 0.5;
-                let fadeout = 7;
+            document.addEventListener('DOMContentLoaded', function () {
+                var AudioContext = window.AudioContext || window.webkitAudioContext || false;
                 
-                for(let i=0; i < freqs.length; i++)
+                let ac = new AudioContext();
+                let count = 0;
+
+                function play(freqs) {
+                    let fadein = 0.25;
+                    let duration = 0.5;
+                    let fadeout = 7;
+
+                    for(let i=0; i < freqs.length; i++)
+                    {
+                        let osc = ac.createOscillator();
+                        let gain = ac.createGain();
+                        osc.connect(gain);
+                        osc.type = "triangle";
+                        osc.frequency.value = freqs[i];
+
+                        gain.gain.setValueAtTime(0.00001, ac.currentTime);
+                        gain.connect(ac.destination);
+                        osc.start(0);
+
+                        gain.gain.exponentialRampToValueAtTime(1.0, ac.currentTime + fadein);
+                        setTimeout(function(){ gain.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + fadeout); }, (fadein+duration)*1000);
+                        setTimeout(function() { osc.stop(); }, (fadein+duration+fadeout)*1000);
+                    }
+                }
+
+                function chord() {
+                    let base = [155.6,293.7,466.2,784.0,932.3];
+                    let multiplier = 0.5 + (3 * Math.random());
+
+                    let freq = [];
+                    for(let i=0; i<base.length; i++)
+                    {
+                        freq.push(base[i] * multiplier);
+                    }
+
+                    play(freq);
+                }
+
+                function makeCircle(x,y)
                 {
-                    let osc = ac.createOscillator();
-                    let gain = ac.createGain();
-                    osc.connect(gain);
-                    osc.type = "triangle";
-                    osc.frequency.value = freqs[i];
+                    let e = document.createElement("div");
+                    e.classList.add("circle");
+                    e.style.top = y;
+                    e.style.left = x;
+
+                    let size = 1 + (5 * Math.random());
+                    e.style.borderWidth = size + "px";
+
+                    document.body.appendChild(e);
+
+                    setTimeout(function() { document.body.removeChild(e); }, 2000);
+                }
+
+                function makeRipple(x,y)
+                {
+                    if(count > 3) { return; }
                     
-                    gain.gain.setValueAtTime(0.00001, ac.currentTime);
-                    gain.connect(ac.destination);
-                    osc.start(0);
-                    
-                    gain.gain.exponentialRampToValueAtTime(1.0, ac.currentTime + fadein);
-                    setTimeout(function(){ gain.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + fadeout); }, (fadein+duration)*1000);
-                    setTimeout(function() { osc.stop(); }, (fadein+duration+fadeout)*1000);
+                    count++;
+                    chord();
+                    makeCircle(x,y);
+                    setTimeout(function() { makeCircle(x,y); }, 100+(Math.random()*100));
+                    setTimeout(function() { makeCircle(x,y); }, 300+(Math.random()*100));
+
+                    setTimeout(function() {
+                        count--;
+                    }, 5000);
                 }
-            }
-            
-            function chord() {
-                let base = [155.6,293.7,466.2,784.0,932.3];
-                let multiplier = 0.5 + (3 * Math.random());
-                
-                let freq = [];
-                for(let i=0; i<base.length; i++)
-                {
-                    freq.push(base[i] * multiplier);
-                }
-                
-                play(freq);
-            }
-            
-            function makeCircle(x,y)
-            {
-                let e = document.createElement("div");
-                e.classList.add("circle");
-                e.style.top = y;
-                e.style.left = x;
-                
-                let size = 1 + (5 * Math.random());
-                e.style.borderWidth = size + "px";
-                
-                document.body.appendChild(e);
-                
-                setTimeout(function() { document.body.removeChild(e); }, 2000);
-            }
-            
-            function makeRipple(x,y)
-            {
-                chord();
-                makeCircle(x,y);
-                setTimeout(function() { makeCircle(x,y); }, 100+(Math.random()*100));
-                setTimeout(function() { makeCircle(x,y); }, 300+(Math.random()*100));
-                
-                stop = true;
-                setTimeout(function() { stop = false; }, 6000);
-            }
-            
-            document.onclick = function(event) { makeRipple(event.pageX, event.pageY) };
-            document.ontouchstart = function(event) { makeRipple(event.touches[0].pageX, event.touches[0].pageY) };
-                        
-            setInterval(function() {
-                if(!stop && (Math.random() > 0.5))
-                {
-                    let randx = Math.random() * document.body.scrollWidth;
-                    let randy = Math.random() * document.body.scrollHeight;
-                    makeRipple(randx,randy);
-                }
-            }, 1000);
+
+                document.onclick = function(event) { makeRipple(event.pageX, event.pageY) };
+                document.ontouchstart = function(event) { makeRipple(event.touches[0].pageX, event.touches[0].pageY) };
+
+                setInterval(function() {
+                    if(count == 0 && (Math.random() > 0.5))
+                    {
+                        let randx = Math.random() * document.body.scrollWidth;
+                        let randy = Math.random() * document.body.scrollHeight;
+                        makeRipple(randx,randy);
+                    }
+                }, 1000);
+            });
         </script>
         
         <style type="text/css">
