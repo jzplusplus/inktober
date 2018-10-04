@@ -1,0 +1,178 @@
+<html>
+    <head>
+        <style type="text/css">
+            body {
+                cursor: none;
+                background: black;
+            }
+            
+            .object {
+                position: absolute;
+                
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                transform: translateX(-50%) translateY(-50%);
+            }
+            
+            .fire {
+                background: red;
+                background: linear-gradient(0deg, rgba(255,0,0,1), rgba(255,127,0,1), rgba(255,0,0,1));
+                box-shadow: 0px 0px 20px 5px rgba(255,0,0,1);
+                background-size: 400% 400%;
+                
+                animation: colors 500ms linear infinite;
+            }
+            
+            @keyframes colors {
+                0% {
+                    background-position: 0% 0%;
+                    box-shadow: 0px 0px 20px 5px rgba(255,0,0,1);
+                }
+                50% {
+                    box-shadow: 0px 0px 20px 8px rgba(255,64,0,1);
+                }
+                100% {
+                    background-position: 100% 100%;
+                    box-shadow: 0px 0px 20px 5px rgba(255,0,0,1);
+                }
+            }
+            
+            .light0 {
+                background: #008000;
+            }
+            .light1 {
+                background: #808000;
+            }
+            .light2 {
+                background: #ff8000;
+            }
+            .light3 {
+                background: #ff4000;
+            }
+            .light4 {
+                background: #ff0000;
+            }
+        </style>
+        
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                let fire_repetitions = 3;
+                let proximity = 50;
+                
+                let setAnimation = function(elem) {
+                    let interval = 200 + (Math.random() * 800);
+                    elem.style["animation-duration"] = interval + "ms";
+                    setTimeout(function() { setAnimation(elem); }, interval * fire_repetitions);
+                };
+                
+                setAnimation(document.getElementById("core"));
+                
+                let handleMouse = function(event) {
+                    document.getElementById("core").style.left = event.pageX;
+                    document.getElementById("core").style.top = event.pageY;
+                }
+                document.onmousemove = handleMouse;
+                document.ontouchmove = handleMouse;
+                
+                let getDist = function(e1, e2) {
+                    let diffX = parseFloat(e2.style.left) - parseFloat(e1.style.left);
+                    let diffY = parseFloat(e2.style.top) - parseFloat(e1.style.top);
+                    return Math.sqrt(diffX**2 + diffY**2);
+                };
+                
+                let isClose = function(elem, targets) {
+                    for(let i=0; i < targets.length; i++)
+                    {
+//                        console.log(getDist(elem, targets[i]));
+                        if(getDist(elem, targets[i]) < proximity)
+                        {
+                            return true;
+                        }
+                    }
+                };
+                
+                let ignite = function(elem) {
+                    if(elem.classList.contains("light0"))
+                    {
+                        elem.classList.remove("light0");
+                        elem.classList.add("light1");
+                    }
+                    else if(elem.classList.contains("light1"))
+                    {
+                        elem.classList.remove("light1");
+                        elem.classList.add("light2");
+                    }
+                    else if(elem.classList.contains("light2"))
+                    {
+                        elem.classList.remove("light2");
+                        elem.classList.add("light3");
+                    }
+                    else if(elem.classList.contains("light3"))
+                    {
+                        elem.classList.remove("light3");
+                        elem.classList.add("light4");
+                    }
+                    else if(elem.classList.contains("light4"))
+                    {
+                        elem.classList.remove("light4");
+                        elem.classList.add("fire");
+                    }
+                };
+                
+                let douse = function(elem) {
+                    if(elem.classList.contains("fire"))
+                    {
+                        elem.classList.remove("fire");
+                        elem.classList.add("light4");
+                    }
+                    else if(elem.classList.contains("light4"))
+                    {
+                        elem.classList.remove("light4");
+                        elem.classList.add("light3");
+                    }
+                    else if(elem.classList.contains("light3"))
+                    {
+                        elem.classList.remove("light3");
+                        elem.classList.add("light2");
+                    }
+                    else if(elem.classList.contains("light2"))
+                    {
+                        elem.classList.remove("light2");
+                        elem.classList.add("light1");
+                    }
+                    else if(elem.classList.contains("light1"))
+                    {
+                        elem.classList.remove("light1");
+                        elem.classList.add("light0");
+                    }
+                };
+                
+                setInterval(function() {
+                    let grasses = Array.from(document.getElementsByClassName("grass"));
+                    let fires = Array.from(document.getElementsByClassName("fire"));
+                    
+                    for(let i=0; i < grasses.length; i++)
+                    {
+                        if(isClose(grasses[i], fires))
+                        {
+                            ignite(grasses[i]);
+                        }
+                        else
+                        {
+                            douse(grasses[i]);
+                        }
+                    }
+                    
+                }, 100);
+            });
+        </script>
+    </head>
+    
+    <body>
+        <div id="core" class="object fire"></div>
+        
+        <div class="object fire" style="top: 100px; left: 100px;"></div>
+        <div class="object grass light0" style="top: 100px; left: 200px;"></div>
+    </body>
+</html>
