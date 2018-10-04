@@ -58,7 +58,7 @@
         <script type="text/javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 let fire_repetitions = 3;
-                let proximity = 50;
+                let proximity = 40;
                 
                 let setAnimation = function(elem) {
                     let interval = 200 + (Math.random() * 800);
@@ -76,15 +76,16 @@
                 document.ontouchmove = handleMouse;
                 
                 let getDist = function(e1, e2) {
-                    let diffX = parseFloat(e2.style.left) - parseFloat(e1.style.left);
-                    let diffY = parseFloat(e2.style.top) - parseFloat(e1.style.top);
+                    let rect1 = e1.getBoundingClientRect();
+                    let rect2 = e2.getBoundingClientRect();
+                    let diffX = parseFloat(rect2.left) - parseFloat(rect1.left);
+                    let diffY = parseFloat(rect2.top) - parseFloat(rect1.top);
                     return Math.sqrt(diffX**2 + diffY**2);
                 };
                 
                 let isClose = function(elem, targets) {
                     for(let i=0; i < targets.length; i++)
                     {
-//                        console.log(getDist(elem, targets[i]));
                         if(getDist(elem, targets[i]) < proximity)
                         {
                             return true;
@@ -117,6 +118,7 @@
                     {
                         elem.classList.remove("light4");
                         elem.classList.add("fire");
+                        setAnimation(elem);
                     }
                 };
                 
@@ -172,7 +174,66 @@
     <body>
         <div id="core" class="object fire"></div>
         
-        <div class="object fire" style="top: 100px; left: 100px;"></div>
-        <div class="object grass light0" style="top: 100px; left: 200px;"></div>
+        <div style="position: absolute; top: 40vh; left: 5vw;">
+            <div class="object grass light0" style="top: 85px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 52.5px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 0px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 15px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 30px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 45px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 60px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 52.5px;"></div>
+        </div>
+        <div style="position: absolute; top: 10vh; left: 50vw;">
+            <div class="object grass light0" style="top: 85px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 52.5px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 0px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 15px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 30px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 45px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 60px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 52.5px;"></div>
+        </div>
+        <div style="position: absolute; top: 5vh; left: 30vw;">
+            <div class="object grass light0" style="top: 85px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 52.5px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 0px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 15px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 30px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 45px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 60px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 52.5px;"></div>
+        </div>
+        <div style="position: absolute; top: 10vh; left: 25vw;">
+            <div class="object grass light0" style="top: 85px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 85px; left: 52.5px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 0px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 15px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 30px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 45px;"></div>
+            <div class="object grass light0" style="top: 100px; left: 60px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 7.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 22.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 37.5px;"></div>
+            <div class="object grass light0" style="top: 115px; left: 52.5px;"></div>
+        </div>
+        
     </body>
 </html>
